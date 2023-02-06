@@ -41,14 +41,21 @@ def broadcast():
 			if addr not in clients:
 				clients.append(addr)
 
+			# Para no reenviar el mensaje del cliente a el mismo
+			# se inicializa al remitente y se omite el envío para éste.
+			sender = addr
+
 			# Mandar el mensaje
 			for client in clients:
-				try: 
+				try:
+					# Omitir envío al sender
+					if client == sender:
+						continue  
 					# Si el mensaje empieza con "SIGNUP_TAG" el usuario está especificando su alias
 					if message.decode().startswith("SIGNUP_TAG:"):
 						alias = message.decode()[message.decode().index(":")+1:]
 						# Indicar que un nuevo cliente se unió al chat
-						server.sendto(f"{alias} joined!".encode(), client)
+						server.sendto(f"---{alias} joined!---".encode(), client)
 					# De otro modo se envía en mesaje a todos los clientes
 					else:
 						server.sendto(message,client)

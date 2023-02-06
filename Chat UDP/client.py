@@ -12,8 +12,9 @@ client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 # rango de 8000 a 9000
 client.bind((HOST, random.randint(8000,9000)))
 # Preguntar al usuario por su alias
-name = input("Ingresa tu alias: ")
-client.sendto(f"SIGNUP_TAG: {name}".encode(), (HOST,PORT))
+alias = input("Ingresa tu alias: ")
+print("\n\n-----------BIENVENIDO A LA SALA --------------")
+client.sendto(f"SIGNUP_TAG: {alias}".encode(), (HOST,PORT))
 
 # -----------------------------------------------------------
 # Funcion del cliente para recibir mensajes 
@@ -24,7 +25,8 @@ def receive():
 			# Recibir mensajes de longitud estandar (1024 bytes)
 			# y decodificar
 			message, addr = client.recvfrom(1024)
-			print(message.decode())
+			message = message.decode()
+			print("\t\t\t\t" + message)
 
 		except():
 			pass
@@ -37,7 +39,8 @@ def send_message():
 		if message == "!q":
 			exit()
 		else:
-			client.sendto(f"{name}: {message}".encode(), (HOST, PORT))
+			message = f"{alias}: {message}"
+			client.sendto(message.encode(), (HOST, PORT))
 
 # Declarar e inicializar los hilos de ejecución
 t1 = threading.Thread(target=receive)
