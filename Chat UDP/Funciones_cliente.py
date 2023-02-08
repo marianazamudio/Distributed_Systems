@@ -137,6 +137,7 @@ def checa_si_llegaron_todos_paq():
     global dict_messages
 	# Si el remitente ya mandó 10 paquetes, se checa que todos hayan llegado
 	if todos_enviados:
+		todos_enviados = 0
 		control = str(1)
 		confirmacion = str(1)
 		no_llegaron = str(3)
