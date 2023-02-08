@@ -108,7 +108,7 @@ def desempaquetar()
 	while not messages.empty():
 		# Tomar los mensajes de la cola y decodificarlos
 		message, addr = messages.get()
-		message = message.decode()
+		
 		# Tomar header, mensaje, numero de paquete (index)
 		header = message[0:24]
 		message = [24:]
