@@ -1,46 +1,104 @@
 import socket
 import threading
+import queue
 import random
 import sys
 
+# TODO: metodo para vacíar o introducir elementos
+# Inicializar lista de tuplas (cadena_paq_per, destinatario)
+lista_paq_perdidos = []
+
+# Inicializar lista de clientes con cola  (HOST,PORT):(total de paq)
+cola_de_clientes = {}
+
+# Crear diccionario con clientes
+dict_messages = {}
+
+# Crear lista con clientes que ya enviaron todo #TODO: controlar esta cosa
+lista_todos_paquetes_env = []
+
+# ---- INICIALIZAR BANDERAS ------ #
+# Cuando está en 1, indica que el otro cliente ya mandó 10 paquetes
+# por lo tanto, se checa que los 10 paquetes hayan llegado a este cliente
+todos_enviados = 0
+# Cuando está en 1, indica que se deben reenvíar algunos paquetes que no 
+# llegaron al otro extremo
+modo_reenvio = 0
+# Cuando está en 1, indica que se debe esperar a que el cliente dé
+# su confirmación de que todos los paquetes llegaron correctamente
+# antes de seguir enviando mensajes
+espera_conf = 1
+
+# Hacer colas  mensajes y mensajes de control
+messages = queue.Queue()
+control = queue.Queue()
+
+# Define la dirección y puerto del servidor
 HOST = "localhost"
 PORT = 9999
 
 # Inicia socket del cliente (protocolo IP y socket UDP)
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
 # Coloca al cliente con la IP del local host y en un puerto aleatorio en el
 # rango de 8000 a 9000
-client.bind((HOST, random.randint(8000,9000)))
-# Preguntar al usuario por su alias
+PORT_CLIENT = random.randint(8000,9000)
+client.bind((HOST, PORT_CLIENT))
+
+# Preguntar al usuario por su alias e imprime mensaje de bienvenida
 alias = input("Ingresa tu alias: ")
 print("\n\n-----------BIENVENIDO A LA SALA --------------")
+
+# Mandar registro de usuario al servidor 
+# TODO: agregar header
 client.sendto(f"SIGNUP_TAG: {alias}".encode(), (HOST,PORT))
 
 # -----------------------------------------------------------
-# Funcion del cliente para recibir mensajes 
+# Funcion del cliente para recibir mensajes
+# TODO: Clasifica todo lo que llega en control o mensaje y
+# lo almacena en la cola 
 # -----------------------------------------------------------
 def receive():
 	while True:
 		try:
 			# Recibir mensajes de longitud estandar (1024 bytes)
-			# y decodificar
+			# decodificar e imprimir mensaje en consola desplazado 
+			# hacia la derecha
 			message, addr = client.recvfrom(1024)
 			message = message.decode()
 			print("\t\t\t\t" + message)
 
+			# TODO: Mandar mensajes a las respectivas colas
+
 		except():
 			pass
 # ---------------------------------------------------------------
-# Funcion para mandar mensajes
+# Funcion del cliente para mandar mensajes
+# TODO: Aqui estara empaquetar
 # ---------------------------------------------------------------
 def send_message():
 	while True:
 		message = input("")
 		if message == "!q":
-			exit()
+			# TODO: Matar conección 
+			pass
+
 		else:
 			message = f"{alias}: {message}"
 			client.sendto(message.encode(), (HOST, PORT))
+
+# ---------------------------------------------
+# TODO: Desempaquetar
+#-----------------------------------------------
+
+#-----------------------------
+# hilo para ver si llego todo
+#-----------------------------
+
+# --------------------
+# hilo de banderas
+# ---------------------
+
 
 # Declarar e inicializar los hilos de ejecución
 t1 = threading.Thread(target=receive)
