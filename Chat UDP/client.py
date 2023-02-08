@@ -3,6 +3,7 @@ import threading
 import queue
 import random
 import sys
+import Funciones_cliente
 
 # TODO: metodo para vacíar o introducir elementos
 # Inicializar lista de tuplas (cadena_paq_per, destinatario)
@@ -61,14 +62,20 @@ client.sendto(f"SIGNUP_TAG: {alias}".encode(), (HOST,PORT))
 def receive():
 	while True:
 		try:
-			# Recibir mensajes de longitud estandar (1024 bytes)
-			# decodificar e imprimir mensaje en consola desplazado 
-			# hacia la derecha
+			# Recibir mensaje
 			message, addr = client.recvfrom(1024)
 			message = message.decode()
-			print("\t\t\t\t" + message)
-
-			# TODO: Mandar mensajes a las respectivas colas
+			# Si el mensaje es menor a 980 bytes se despliega
+			if len(message) < 980:
+				print("\t\t\t\t" + message)
+			else:
+				# Ver si es mensaje o mensaje de control
+				if message[20] == "1"
+					# Añadir mensaje a cola de control
+					control.put((message,addr))
+				else:
+					# Añadir mensaje a cola de mensajes
+					messages.put((message, addr))
 
 		except():
 			pass
@@ -79,13 +86,14 @@ def receive():
 def send_message():
 	while True:
 		message = input("")
-		if message == "!q":
-			# TODO: Matar conección 
-			pass
-
-		else:
+		message = f"{alias}: {message}"
+		
+		if len(message) < 980:
 			message = f"{alias}: {message}"
 			client.sendto(message.encode(), (HOST, PORT))
+		# TODO: poner el empaquetar
+		else: 
+			
 
 # ---------------------------------------------
 # TODO: Desempaquetar
