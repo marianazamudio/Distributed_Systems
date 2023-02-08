@@ -18,6 +18,9 @@ dict_messages = {}
 # Crear lista con clientes que ya enviaron todo #TODO: controlar esta cosa
 lista_todos_paquetes_env = []
 
+# Contador confirmaciones
+cont_conf = 0
+
 # ---- INICIALIZAR BANDERAS ------ #
 # Cuando está en 1, indica que el otro cliente ya mandó 10 paquetes
 # por lo tanto, se checa que los 10 paquetes hayan llegado a este cliente
@@ -84,6 +87,7 @@ def receive():
 # TODO: Aqui estara empaquetar
 # ---------------------------------------------------------------
 def send_message():
+	global PORT_CLIENT
 	while True:
 		message = input("")
 		message = f"{alias}: {message}"
@@ -93,6 +97,8 @@ def send_message():
 			client.sendto(message.encode(), (HOST, PORT))
 		# TODO: poner el empaquetar
 		else: 
+			empaquetar(message, PORT_CLIENT)
+			
 			
 
 # ---------------------------------------------
@@ -106,11 +112,48 @@ def send_message():
 # --------------------
 # hilo de banderas
 # ---------------------
+def cola_control():
+	while not control.empty()
+		# Tomar los mensajes de la cola y decodificarlos
+		message, addr = control.get()
 
+		# Tomar header, mensaje, numero de paquete
+		remitente = message[0:20]
+		host_rem = remitente[0:15]
+		host_rem = host_rem.replace(" ", "")
+		port_rem = remitente[15:]
+		port_rem = port_rem.replace(" ", "")
+		tipo_control = message[21] # 1: ya me enviaron todo, 2: llegó todo bien, 3: no llegó bien
 
+		if tipo_control == "1":
+			todos_enviados = 1
+			
+		elif tipo_control == "2":
+			numero_clientes = int(message[22:])
+			cont_conf += 1
+			
+			if cont_conf == numero_clientes:
+				
+			
+			
+			# Al final pasa esto
+			modo_reenvío = 0
+			
+
+		elif tipo_control == "3":
+			cadenas_faltantes = message[22:]
+			# Guardar datos de a quien no le llegó bien en un diccionario
+			lista_paq_perdidos.append((cadenas_faltantes,client))
+			modo_reenvío = 1
+
+	
+	
 # Declarar e inicializar los hilos de ejecución
 t1 = threading.Thread(target=receive)
 t2 = threading.Thread(target=send_message)
+t3 = threading.Tread(target=desempaquetar)
+t4 = threading.Thread(target=checa_si_llegaron_todos_paq)
+t5 = threading.Thread(target=cola_control)
 t1.start()
 t2.start()
 
