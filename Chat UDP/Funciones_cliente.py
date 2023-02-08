@@ -180,7 +180,7 @@ def checa_si_llegaron_todos_paq():
 
 					# Si la lista está vacía cambio modo reenvio
 					if len(lista_todos_paquetes_env) == 0:
-						modo_reenvio == 0:
+						modo_reenvio = 0:
 
 
 
